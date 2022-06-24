@@ -72,10 +72,30 @@ Make a histogram of the total number of steps taken each day and Calculate and r
 
 # New data set
 act_filled <- act
- 
 
+for (i in interval_steps$Group.1) {
+    act_filled[act_filled$interval == i & is.na(act_filled$steps), ]$steps <- 
+        interval_steps$x[interval_steps$Group.1 == i]
+}
 
 ```
 
+```{r}
+daily_steps_filled <- aggregate(x = act_filled$steps, by=list(act_filled$date), FUN = sum )
+
+ggplot(daily_steps_filled, aes(x = x)) + 
+  geom_histogram(bins = 50) + 
+  labs(title = "Mean Total Number of Steps Taken Per Day", x = "Steps")
+```
+
+Mean and Median
+```{r}
+mean_steps_filled <- mean(daily_steps_filled$x)
+median_steps_filled <- median(daily_steps_filled$x)
+
+print(mean_steps_filled)
+print(median_steps_filled)
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
