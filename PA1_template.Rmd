@@ -1,25 +1,81 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+author: Zach Dungan
+output: html_document
 ---
 
 
 ## Loading and preprocessing the data
 
+```{r}
+setwd("~/R/RepData_PeerAssessment1")
 
+library(ggplot2)
+library(dplyr)
+
+act <- read.csv("activity.csv", header = TRUE)
+```
 
 ## What is mean total number of steps taken per day?
 
+```{r}
+daily_steps <- aggregate(x = act$steps, by=list(act$date), FUN = sum )
 
+ggplot(daily_steps, aes(x = x)) + 
+  geom_histogram(bins = 50) + 
+  labs(title = "Mean Total Number of Steps Taken Per Day", x = "Steps")
+```
+
+Mean and Median
+```{r}
+mean_steps <- mean(daily_steps$x, na.rm = TRUE)
+median_steps <- median(daily_steps$x, na.rm = TRUE)
+
+print(mean_steps)
+print(median_steps)
+```
 
 ## What is the average daily activity pattern?
+```{r}
+interval_steps <- aggregate(x = act$steps, by = list(act$interval), FUN = mean, na.rm=TRUE)
 
+ggplot(data=interval_steps, aes(x=Group.1, y=x)) +
+    geom_line() +
+    xlab("Interval") +
+    ylab("Average number of steps taken") 
+```
 
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r}
+max_steps <- which.max(interval_steps$x)
+max_interval <- interval_steps[max_steps, ]$Group.1
+
+print(max_interval)
+```
 
 ## Imputing missing values
 
+Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+```{r}
+missing_val <- sum(is.na(act$steps))
+print(missing_val)
+```
+Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+```{r}
+# Fill in NA values with average steps from that particular interval 
+
+# New data set
+act_filled <- act
+ 
+
+
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
