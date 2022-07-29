@@ -13,6 +13,7 @@ setwd("~/R/RepData_PeerAssessment1")
 library(ggplot2)
 library(dplyr)
 
+
 act <- read.csv("activity.csv", header = TRUE)
 ```
 
@@ -99,3 +100,16 @@ print(median_steps_filled)
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+```{r}
+act_filled$date <- as.Date(strptime(act_filled$date, format="%Y-%m-%d"))
+
+act_filled$days_type <- ifelse(weekdays(act_filled$date) %in% c("Saturday", "Sunday"), "weekend", "weekday")
+
+week_filled <- act_filled %>%
+  group_by(interval, days_type) %>%
+  summarize(mean_steps_week = mean(steps))
+
+ggplot(data = week_filled) + 
+  geom_line(aes(interval, mean_steps_week)) + 
+  facet_grid(days_type~.)
+```
